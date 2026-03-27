@@ -5,6 +5,7 @@
 	import StatusItem from './StatusHistory/StatusItem.svelte';
 	export let statusHistory = [];
 	export let expand = false;
+	export let messageDone = false;
 
 	let showHistory = true;
 
@@ -27,6 +28,10 @@
 	) {
 		history = statusHistory;
 	}
+
+	// Check if all statuses are done but message is still in progress
+	$: allStatusesDone = history.length > 0 && history.every((s) => s.done === true);
+	$: showGeneratingIndicator = !messageDone && allStatusesDone;
 </script>
 
 {#if history && history.length > 0}
@@ -75,4 +80,16 @@
 			{/if}
 		</div>
 	{/if}
+{/if}
+
+{#if showGeneratingIndicator}
+	<div class="text-sm flex flex-col w-full mt-1">
+		<div class="status-description flex items-center gap-2 py-0.5 w-full text-left">
+			<div class="flex flex-col justify-center -space-y-0.5">
+				<div class="shimmer text-gray-500 dark:text-gray-500 text-base line-clamp-1 text-wrap">
+					{$i18n.t('Generating response...')}
+				</div>
+			</div>
+		</div>
+	</div>
 {/if}
